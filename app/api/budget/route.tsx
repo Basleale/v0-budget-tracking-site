@@ -24,7 +24,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    // Overwrite the file to maintain a single source of truth
+    // Overwrites the file to maintain current state
     await put(BUDGET_FILE, JSON.stringify(data), {
       access: 'public',
       token: BLOB_TOKEN,

@@ -24,7 +24,6 @@ export default function Home() {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Weighted Daily Limit Calculation
   const calculateDailyStatus = () => {
     if (monthlyBudget <= 0) return { todayLimit: 0, todaySpent: 0, isOver: false };
 
@@ -53,7 +52,6 @@ export default function Home() {
 
   const { todayLimit, todaySpent, isOver } = calculateDailyStatus();
 
-  // Load Data from Blob on mount
   useEffect(() => {
     async function init() {
       try {
@@ -98,11 +96,8 @@ export default function Home() {
   const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0)
   const categorySpending = transactions.reduce((acc, t) => {
     const existing = acc.find((item) => item.category === t.category)
-    if (existing) {
-      existing.amount += t.amount
-    } else {
-      acc.push({ category: t.category, amount: t.amount, emoji: t.emoji })
-    }
+    if (existing) { existing.amount += t.amount }
+    else { acc.push({ category: t.category, amount: t.amount, emoji: t.emoji }) }
     return acc
   }, [] as Array<{ category: string; amount: number; emoji: string }>)
 
@@ -128,7 +123,6 @@ export default function Home() {
         <BudgetHeader />
 
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-          {/* Budget Setting Section */}
           <div className="mb-8 p-6 rounded-lg border border-border/30 bg-secondary/20 flex flex-col md:flex-row items-center gap-4 animate-fadeInUp">
             <div className="flex items-center gap-3 flex-1">
               <WalletIcon className="text-primary h-6 w-6" />
@@ -143,7 +137,6 @@ export default function Home() {
             />
           </div>
 
-          {/* Budget Warning Alert */}
           {monthlyBudget > 0 && isOver && (
             <div className="mb-8 animate-slide-in">
               <Alert variant="destructive" className="border-glow-red bg-destructive/10">
@@ -167,14 +160,12 @@ export default function Home() {
               <div className="animate-slide-in">
                 <TransactionForm onAddTransaction={addTransaction} />
               </div>
-
               {categorySpending.length > 0 && (
                 <div className="animate-slide-in" style={{ animationDelay: '0.1s' }}>
                   <CategoryChart data={categorySpending} />
                 </div>
               )}
             </div>
-
             <div className="lg:col-span-2">
               <TransactionList
                 transactions={transactions}
