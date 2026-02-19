@@ -1,4 +1,4 @@
-import { put, get } from '@vercel/blob'
+import { put, list } from '@vercel/blob'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface Transaction {
@@ -14,15 +14,21 @@ const BLOB_PATH = 'budget-data.json'
 
 export async function GET(request: NextRequest) {
   try {
-    const blob = await get(BLOB_PATH)
-    
-    if (!blob) {
+    // List blobs to find our file
+    const { blobs } = await list({
+      prefix: 'budget-data',
+    })
+
+    if (!blobs || blobs.length === 0) {
       return NextResponse.json({ transactions: [] })
     }
 
-    const text = await blob.text()
+    // Get the blob URL and fetch the content
+    const blobFile = blobs[0]
+    const response = await fetch(blobFile.downloadUrl)
+    const text = await response.text()
     const data = JSON.parse(text)
-    
+
     return NextResponse.json(data)
   } catch (error) {
     console.error('Error fetching from Blob:', error)
