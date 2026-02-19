@@ -25,7 +25,7 @@ export default function BudgetHeader() {
             className="text-lg text-muted-foreground max-w-2xl animate-fadeInUp"
             style={{ animationDelay: '0.2s' }}
           >
-            Track every peso, rupiah, and dollar. Your personalized money police officer is here. 💸
+            Track every Santim and Birr. Your personalized Genzeb zapa is here. 💸
           </p>
 
           {/* Decorative elements */}
@@ -35,11 +35,11 @@ export default function BudgetHeader() {
           >
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-primary glow-blue animate-pulse"></div>
-              <span className="text-muted-foreground">Real-time tracking</span>
+              <span className="text-muted-foreground">Blob Storage Sync</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-accent glow-red animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span className="text-muted-foreground">Smart categories</span>
+              <span className="text-muted-foreground">Adaptive Genzeb Limits</span>
             </div>
           </div>
         </div>
