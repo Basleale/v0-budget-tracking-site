@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 
 interface TransactionFormProps {
   onAddTransaction: (transaction: {
@@ -67,11 +66,8 @@ export default function TransactionForm({ onAddTransaction }: TransactionFormPro
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="relative p-6 rounded-lg border border-border/30 bg-gradient-to-br from-secondary/40 to-background backdrop-blur-sm overflow-hidden group"
+    <div
+      className="relative p-6 rounded-lg border border-border/30 bg-gradient-to-br from-secondary/40 to-background backdrop-blur-sm overflow-hidden group animate-fadeInUp"
     >
       {/* Animated border glow on hover */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -127,15 +123,13 @@ export default function TransactionForm({ onAddTransaction }: TransactionFormPro
             </label>
             <div className="grid grid-cols-2 gap-2">
               {categories.map((category) => (
-                <motion.button
+                <button
                   key={category.name}
                   type="button"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   onClick={() =>
                     setFormData({ ...formData, category: category.name })
                   }
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border hover:scale-105 ${
                     formData.category === category.name
                       ? 'border-primary/60 bg-primary/10 text-foreground glow-blue'
                       : 'border-border/30 bg-secondary/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
@@ -143,7 +137,7 @@ export default function TransactionForm({ onAddTransaction }: TransactionFormPro
                 >
                   <span className="mr-2">{category.emoji}</span>
                   {category.name}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
@@ -164,28 +158,24 @@ export default function TransactionForm({ onAddTransaction }: TransactionFormPro
           </div>
 
           {/* Submit Button */}
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             disabled={isSubmitting}
             type="submit"
-            className="w-full px-4 py-3 mt-6 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed glow-red shadow-lg"
+            className="w-full px-4 py-3 mt-6 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed glow-red shadow-lg hover:scale-105 active:scale-95"
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                  className="w-4 h-4 border-2 border-transparent border-t-accent-foreground border-r-accent-foreground rounded-full"
-                ></motion.div>
+                <div
+                  className="w-4 h-4 border-2 border-transparent border-t-accent-foreground border-r-accent-foreground rounded-full animate-spin"
+                ></div>
                 Adding...
               </span>
             ) : (
               '✨ Add Spending'
             )}
-          </motion.button>
+          </button>
         </form>
       </div>
-    </motion.div>
+    </div>
   )
 }

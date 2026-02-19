@@ -1,7 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
-
 interface CategoryData {
   category: string
   amount: number
@@ -22,22 +20,19 @@ export default function CategoryChart({ data }: CategoryChartProps) {
   }
 
   const colors = [
-    { bg: 'bg-accent', progress: 'from-accent' },
-    { bg: 'bg-primary', progress: 'from-primary' },
-    { bg: 'bg-blue-500', progress: 'from-blue-500' },
-    { bg: 'bg-red-600', progress: 'from-red-600' },
-    { bg: 'bg-blue-600', progress: 'from-blue-600' },
-    { bg: 'bg-red-700', progress: 'from-red-700' },
-    { bg: 'bg-blue-700', progress: 'from-blue-700' },
-    { bg: 'bg-red-800', progress: 'from-red-800' },
+    { progress: 'from-accent' },
+    { progress: 'from-primary' },
+    { progress: 'from-blue-500' },
+    { progress: 'from-red-600' },
+    { progress: 'from-blue-600' },
+    { progress: 'from-red-700' },
+    { progress: 'from-blue-700' },
+    { progress: 'from-red-800' },
   ]
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="relative p-6 rounded-lg border border-border/30 bg-gradient-to-br from-secondary/40 to-background backdrop-blur-sm overflow-hidden group"
+    <div
+      className="relative p-6 rounded-lg border border-border/30 bg-gradient-to-br from-secondary/40 to-background backdrop-blur-sm overflow-hidden group animate-fadeInUp"
     >
       {/* Animated border glow on hover */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -58,12 +53,10 @@ export default function CategoryChart({ data }: CategoryChartProps) {
             const color = colors[index % colors.length]
 
             return (
-              <motion.div
+              <div
                 key={item.category}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group/item"
+                className="group/item animate-fadeInUp"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {/* Category Header */}
                 <div className="flex items-center justify-between mb-2">
@@ -87,32 +80,26 @@ export default function CategoryChart({ data }: CategoryChartProps) {
 
                 {/* Progress Bar */}
                 <div className="relative h-2 bg-secondary/60 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${percentage}%` }}
-                    transition={{ duration: 0.8, delay: index * 0.1, ease: 'easeOut' }}
-                    className={`h-full bg-gradient-to-r ${color.progress} to-transparent rounded-full`}
-                  ></motion.div>
+                  <div
+                    className={`h-full bg-gradient-to-r ${color.progress} to-transparent rounded-full transition-all duration-800`}
+                    style={{ width: `${percentage}%` }}
+                  ></div>
 
                   {/* Shimmer effect */}
-                  <motion.div
-                    animate={{ x: ['0%', '100%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  <div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
                     style={{ width: '30%' }}
-                  ></motion.div>
+                  ></div>
                 </div>
-              </motion.div>
+              </div>
             )
           })}
         </div>
 
         {/* Total Spending Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-6 p-4 rounded-lg border border-accent/30 bg-accent/5 flex items-center justify-between"
+        <div
+          className="mt-6 p-4 rounded-lg border border-accent/30 bg-accent/5 flex items-center justify-between animate-fadeInUp"
+          style={{ animationDelay: '0.3s' }}
         >
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -122,15 +109,14 @@ export default function CategoryChart({ data }: CategoryChartProps) {
               ${total.toFixed(2)}
             </p>
           </div>
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="text-3xl"
+          <div
+            className="text-3xl animate-spin"
+            style={{ animationDuration: '20s' }}
           >
             💰
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

@@ -1,7 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
-
 interface BudgetStatsProps {
   totalSpent: number
   transactionCount: number
@@ -43,15 +41,13 @@ export default function BudgetStats({ totalSpent, transactionCount }: BudgetStat
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {stats.map((stat, index) => (
-        <motion.div
+        <div
           key={stat.label}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          whileHover={{ scale: 1.02 }}
+          className="animate-fadeInUp"
+          style={{ animationDelay: `${index * 0.1}s` }}
         >
           <div
-            className={`relative p-6 rounded-lg border transition-all duration-300 group cursor-pointer
+            className={`relative p-6 rounded-lg border transition-all duration-300 group cursor-pointer hover:scale-105
               ${stat.isHighlight
                 ? 'border-accent/30 bg-gradient-to-br from-accent/10 to-transparent hover:border-accent/60 glow-red'
                 : 'border-border/30 bg-gradient-to-br from-secondary/40 to-transparent hover:border-primary/60'
@@ -75,16 +71,14 @@ export default function BudgetStats({ totalSpent, transactionCount }: BudgetStat
               <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
 
               {/* Decorative dot indicator */}
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className={`absolute top-2 right-2 w-2 h-2 rounded-full ${
+              <div
+                className={`absolute top-2 right-2 w-2 h-2 rounded-full animate-pulse ${
                   stat.isHighlight ? 'bg-accent' : 'bg-primary'
                 } opacity-60`}
-              ></motion.div>
+              ></div>
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   )
