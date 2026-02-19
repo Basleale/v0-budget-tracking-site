@@ -7,7 +7,7 @@ export default function BudgetHeader() {
         {/* Animated border glow effect */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
         
-        <div className="relative">
+        <div className="relative text-center">
           <div className="animate-fadeInUp">
             <h1 className="text-4xl md:text-5xl font-black text-balance mb-3">
               <span className="bg-gradient-to-r from-accent via-foreground to-primary bg-clip-text text-transparent">
@@ -22,7 +22,7 @@ export default function BudgetHeader() {
           </div>
 
           <p
-            className="text-lg text-muted-foreground max-w-2xl animate-fadeInUp"
+            className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fadeInUp"
             style={{ animationDelay: '0.2s' }}
           >
             Track every peso, rupiah, and dollar. Your personalized money police officer is here. 💸
@@ -30,7 +30,7 @@ export default function BudgetHeader() {
 
           {/* Decorative elements */}
           <div
-            className="mt-6 flex gap-4 animate-fadeInUp"
+            className="mt-6 flex gap-4 justify-center animate-fadeInUp"
             style={{ animationDelay: '0.4s' }}
           >
             <div className="flex items-center gap-2 text-sm">
