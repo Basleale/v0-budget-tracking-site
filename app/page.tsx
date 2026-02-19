@@ -24,6 +24,7 @@ export default function Home() {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Weighted Daily Limit Calculation (Weekends = 1.5x weight)
   const calculateDailyStatus = () => {
     if (monthlyBudget <= 0) return { todayLimit: 0, todaySpent: 0, isOver: false };
 
@@ -52,6 +53,7 @@ export default function Home() {
 
   const { todayLimit, todaySpent, isOver } = calculateDailyStatus();
 
+  // Initial Load from Blob
   useEffect(() => {
     async function init() {
       try {
@@ -123,6 +125,7 @@ export default function Home() {
         <BudgetHeader />
 
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+          {/* Budget Setting Section */}
           <div className="mb-8 p-6 rounded-lg border border-border/30 bg-secondary/20 flex flex-col md:flex-row items-center gap-4 animate-fadeInUp">
             <div className="flex items-center gap-3 flex-1">
               <WalletIcon className="text-primary h-6 w-6" />
@@ -137,6 +140,7 @@ export default function Home() {
             />
           </div>
 
+          {/* Budget Warning Alert */}
           {monthlyBudget > 0 && isOver && (
             <div className="mb-8 animate-slide-in">
               <Alert variant="destructive" className="border-glow-red bg-destructive/10">
