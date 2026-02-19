@@ -8,8 +8,14 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Amir Stop Wasting Money Lil Bru',
-  description: 'Budget tracking made beautiful. Track your spending with style.',
+  description: 'Track every Santim and Birr. Your personalized Genzeb zapa is here.',
   generator: 'v0.app',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Budget Birr',
+  },
   icons: {
     icon: [
       {

@@ -6,9 +6,6 @@ import BudgetStats from '@/components/BudgetStats'
 import TransactionForm from '@/components/TransactionForm'
 import TransactionList from '@/components/TransactionList'
 import CategoryChart from '@/components/CategoryChart'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
-import { InfoIcon, WalletIcon } from 'lucide-react'
 
 interface Transaction {
   id: string
@@ -21,57 +18,41 @@ interface Transaction {
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [monthlyBudget, setMonthlyBudget] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
-  // Weighted Daily Limit Calculation (Weekends = 1.5x weight)
-  const calculateDailyStatus = () => {
-    if (monthlyBudget <= 0) return { todayLimit: 0, todaySpent: 0, isOver: false };
+  useEffect(() => {
+    // Handle the install prompt event
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    let totalWeights = 0;
-    for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(year, month, i).getDay();
-      // Saturday (6) and Sunday (0) get 1.5x weight
-      totalWeights += (day === 0 || day === 6) ? 1.5 : 1;
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    const savedTransactions = localStorage.getItem('transactions')
+    if (savedTransactions) {
+      setTransactions(JSON.parse(savedTransactions))
     }
+    setIsLoading(false)
 
-    const unitValue = monthlyBudget / totalWeights;
-    const isTodayWeekend = now.getDay() === 0 || now.getDay() === 6;
-    const todayLimit = unitValue * (isTodayWeekend ? 1.5 : 1);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    }
+  }, [])
 
-    const todayString = now.toISOString().split('T')[0];
-    const todaySpent = transactions
-      .filter(t => t.date === todayString)
-      .reduce((sum, t) => sum + t.amount, 0);
+  useEffect(() => {
+    localStorage.setItem('transactions', JSON.stringify(transactions))
+  }, [transactions])
 
-    return { todayLimit, todaySpent, isOver: todaySpent > todayLimit };
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
   };
-
-  const { todayLimit, todaySpent, isOver } = calculateDailyStatus();
-
-  // 1. Load data from LocalStorage on first render
-  useEffect(() => {
-    const savedTxs = localStorage.getItem('genzeb_transactions');
-    const savedBudget = localStorage.getItem('genzeb_monthly_budget');
-    
-    if (savedTxs) setTransactions(JSON.parse(savedTxs));
-    if (savedBudget) setMonthlyBudget(parseFloat(savedBudget));
-    
-    setIsLoading(false);
-  }, []);
-
-  // 2. Save data to LocalStorage whenever transactions or budget change
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem('genzeb_transactions', JSON.stringify(transactions));
-      localStorage.setItem('genzeb_monthly_budget', monthlyBudget.toString());
-    }
-  }, [transactions, monthlyBudget, isLoading]);
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
     const newTransaction: Transaction = {
@@ -83,11 +64,6 @@ export default function Home() {
 
   const deleteTransaction = (id: string) => {
     setTransactions(transactions.filter((t) => t.id !== id))
-  }
-
-  const handleBudgetChange = (val: string) => {
-    const num = parseFloat(val) || 0;
-    setMonthlyBudget(num);
   }
 
   const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0)
@@ -107,7 +83,7 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse-glow text-center">
           <div className="text-3xl font-bold text-accent mb-4">💰</div>
-          <p className="text-muted-foreground">Loading your Genzeb...</p>
+          <p className="text-muted-foreground">Loading your budget...</p>
         </div>
       </div>
     )
@@ -121,39 +97,9 @@ export default function Home() {
       </div>
 
       <div className="relative z-10">
-        <BudgetHeader />
+        <BudgetHeader onInstall={deferredPrompt ? handleInstallClick : undefined} />
 
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-          {/* Monthly Budget Input Section */}
-          <div className="mb-8 p-6 rounded-lg border border-border/30 bg-secondary/20 flex flex-col md:flex-row items-center gap-4 animate-fadeInUp">
-            <div className="flex items-center gap-3 flex-1">
-              <WalletIcon className="text-primary h-6 w-6" />
-              <h2 className="text-xl font-bold">Monthly Budget (Birr)</h2>
-            </div>
-            <Input 
-              type="number" 
-              placeholder="Set your monthly budget..." 
-              value={monthlyBudget || ''}
-              onChange={(e) => handleBudgetChange(e.target.value)}
-              className="max-w-xs bg-input border-primary/20 text-lg font-bold"
-            />
-          </div>
-
-          {/* Budget Warning Alert */}
-          {monthlyBudget > 0 && isOver && (
-            <div className="mb-8 animate-slide-in">
-              <Alert variant="destructive" className="border-glow-red bg-destructive/10">
-                <InfoIcon className="h-5 w-5" />
-                <AlertTitle className="text-lg font-bold">Genzeb Warning!</AlertTitle>
-                <AlertDescription className="text-base">
-                  Your weighted daily limit is <span className="font-bold">{todayLimit.toFixed(2)} Birr</span>. 
-                  You've spent <span className="font-bold underline">{todaySpent.toFixed(2)} Birr</span> already. 
-                  Stop wasting money lil bru!
-                </AlertDescription>
-              </Alert>
-            </div>
-          )}
-
           <div className="mb-12">
             <BudgetStats totalSpent={totalSpent} transactionCount={transactions.length} />
           </div>
