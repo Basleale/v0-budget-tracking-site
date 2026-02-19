@@ -54,7 +54,7 @@ export default function Home() {
 
   const { todayLimit, todaySpent, isOver } = calculateDailyStatus();
 
-  // Load from LocalStorage on mount
+  // 1. Load data from LocalStorage on first render
   useEffect(() => {
     const savedTxs = localStorage.getItem('genzeb_transactions');
     const savedBudget = localStorage.getItem('genzeb_monthly_budget');
@@ -65,7 +65,7 @@ export default function Home() {
     setIsLoading(false);
   }, []);
 
-  // Save to LocalStorage whenever state changes
+  // 2. Save data to LocalStorage whenever transactions or budget change
   useEffect(() => {
     if (!isLoading) {
       localStorage.setItem('genzeb_transactions', JSON.stringify(transactions));
@@ -74,23 +74,31 @@ export default function Home() {
   }, [transactions, monthlyBudget, isLoading]);
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTx = { ...transaction, id: Date.now().toString() };
-    setTransactions([newTx, ...transactions]);
-  };
+    const newTransaction: Transaction = {
+      ...transaction,
+      id: Date.now().toString(),
+    }
+    setTransactions([newTransaction, ...transactions])
+  }
 
   const deleteTransaction = (id: string) => {
-    setTransactions(transactions.filter((t) => t.id !== id));
-  };
+    setTransactions(transactions.filter((t) => t.id !== id))
+  }
 
   const handleBudgetChange = (val: string) => {
-    setMonthlyBudget(parseFloat(val) || 0);
-  };
+    const num = parseFloat(val) || 0;
+    setMonthlyBudget(num);
+  }
 
   const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0)
+
   const categorySpending = transactions.reduce((acc, t) => {
     const existing = acc.find((item) => item.category === t.category)
-    if (existing) { existing.amount += t.amount }
-    else { acc.push({ category: t.category, amount: t.amount, emoji: t.emoji }) }
+    if (existing) {
+      existing.amount += t.amount
+    } else {
+      acc.push({ category: t.category, amount: t.amount, emoji: t.emoji })
+    }
     return acc
   }, [] as Array<{ category: string; amount: number; emoji: string }>)
 
@@ -124,7 +132,7 @@ export default function Home() {
             </div>
             <Input 
               type="number" 
-              placeholder="Set your monthly goal..." 
+              placeholder="Set your monthly budget..." 
               value={monthlyBudget || ''}
               onChange={(e) => handleBudgetChange(e.target.value)}
               className="max-w-xs bg-input border-primary/20 text-lg font-bold"
@@ -155,12 +163,14 @@ export default function Home() {
               <div className="animate-slide-in">
                 <TransactionForm onAddTransaction={addTransaction} />
               </div>
+
               {categorySpending.length > 0 && (
                 <div className="animate-slide-in" style={{ animationDelay: '0.1s' }}>
                   <CategoryChart data={categorySpending} />
                 </div>
               )}
             </div>
+
             <div className="lg:col-span-2">
               <TransactionList
                 transactions={transactions}

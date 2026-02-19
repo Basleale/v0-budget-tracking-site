@@ -33,11 +33,11 @@ export default function BudgetHeader() {
           >
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-primary glow-blue animate-pulse"></div>
-              <span className="text-muted-foreground">Local Persistent Storage</span>
+              <span className="text-muted-foreground">Local Storage Enabled</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-accent glow-red animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span className="text-muted-foreground">Weighted Daily Limits</span>
+              <span className="text-muted-foreground">Adaptive Genzeb Limits</span>
             </div>
           </div>
         </div>
