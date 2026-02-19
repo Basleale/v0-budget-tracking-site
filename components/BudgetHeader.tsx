@@ -4,7 +4,6 @@ export default function BudgetHeader() {
   return (
     <header className="relative border-b border-border/30 bg-gradient-to-b from-secondary/40 to-background backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* Animated border glow effect */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
         
         <div className="relative">
@@ -28,18 +27,17 @@ export default function BudgetHeader() {
             Track every Santim and Birr. Your personalized Genzeb zapa is here. 💸
           </p>
 
-          {/* Decorative elements */}
           <div
             className="mt-6 flex gap-4 animate-fadeInUp"
             style={{ animationDelay: '0.4s' }}
           >
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-primary glow-blue animate-pulse"></div>
-              <span className="text-muted-foreground">Blob Storage Sync</span>
+              <span className="text-muted-foreground">Local Persistent Storage</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-accent glow-red animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span className="text-muted-foreground">Adaptive Genzeb Limits</span>
+              <span className="text-muted-foreground">Weighted Daily Limits</span>
             </div>
           </div>
         </div>

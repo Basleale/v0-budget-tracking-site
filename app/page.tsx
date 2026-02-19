@@ -36,6 +36,7 @@ export default function Home() {
     let totalWeights = 0;
     for (let i = 1; i <= daysInMonth; i++) {
       const day = new Date(year, month, i).getDay();
+      // Saturday (6) and Sunday (0) get 1.5x weight
       totalWeights += (day === 0 || day === 6) ? 1.5 : 1;
     }
 
@@ -53,46 +54,36 @@ export default function Home() {
 
   const { todayLimit, todaySpent, isOver } = calculateDailyStatus();
 
-  // Initial Load from Blob
+  // Load from LocalStorage on mount
   useEffect(() => {
-    async function init() {
-      try {
-        const res = await fetch('/api/budget');
-        const data = await res.json();
-        if (data.transactions) setTransactions(data.transactions);
-        if (data.monthlyBudget) setMonthlyBudget(data.monthlyBudget);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    init();
+    const savedTxs = localStorage.getItem('genzeb_transactions');
+    const savedBudget = localStorage.getItem('genzeb_monthly_budget');
+    
+    if (savedTxs) setTransactions(JSON.parse(savedTxs));
+    if (savedBudget) setMonthlyBudget(parseFloat(savedBudget));
+    
+    setIsLoading(false);
   }, []);
 
-  const syncData = async (txs: Transaction[], budget: number) => {
-    await fetch('/api/budget', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transactions: txs, monthlyBudget: budget }),
-    });
-  };
+  // Save to LocalStorage whenever state changes
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem('genzeb_transactions', JSON.stringify(transactions));
+      localStorage.setItem('genzeb_monthly_budget', monthlyBudget.toString());
+    }
+  }, [transactions, monthlyBudget, isLoading]);
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
     const newTx = { ...transaction, id: Date.now().toString() };
-    const updatedTxs = [newTx, ...transactions];
-    setTransactions(updatedTxs);
-    syncData(updatedTxs, monthlyBudget);
+    setTransactions([newTx, ...transactions]);
   };
 
   const deleteTransaction = (id: string) => {
-    const updatedTxs = transactions.filter((t) => t.id !== id);
-    setTransactions(updatedTxs);
-    syncData(updatedTxs, monthlyBudget);
+    setTransactions(transactions.filter((t) => t.id !== id));
   };
 
   const handleBudgetChange = (val: string) => {
-    const num = parseFloat(val) || 0;
-    setMonthlyBudget(num);
-    syncData(transactions, num);
+    setMonthlyBudget(parseFloat(val) || 0);
   };
 
   const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0)
@@ -108,7 +99,7 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse-glow text-center">
           <div className="text-3xl font-bold text-accent mb-4">💰</div>
-          <p className="text-muted-foreground">Syncing your Genzeb...</p>
+          <p className="text-muted-foreground">Loading your Genzeb...</p>
         </div>
       </div>
     )
@@ -125,7 +116,7 @@ export default function Home() {
         <BudgetHeader />
 
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-          {/* Budget Setting Section */}
+          {/* Monthly Budget Input Section */}
           <div className="mb-8 p-6 rounded-lg border border-border/30 bg-secondary/20 flex flex-col md:flex-row items-center gap-4 animate-fadeInUp">
             <div className="flex items-center gap-3 flex-1">
               <WalletIcon className="text-primary h-6 w-6" />
@@ -133,7 +124,7 @@ export default function Home() {
             </div>
             <Input 
               type="number" 
-              placeholder="Enter limit..." 
+              placeholder="Set your monthly goal..." 
               value={monthlyBudget || ''}
               onChange={(e) => handleBudgetChange(e.target.value)}
               className="max-w-xs bg-input border-primary/20 text-lg font-bold"
